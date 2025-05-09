@@ -119,4 +119,24 @@ public class HobbyDAO {
 			}
 		}
 	}
+	public void updateUser(HobbyDTO dto) {
+	    Connection conn = null;
+	    PreparedStatement pstmt = null;
+	    String sql = "UPDATE user SET name = ?, phone = ?, address = ?, gender = ?, birthdate = ? WHERE user_id = ?";
+
+	    try {
+	        conn = HobbyDBConnection.getConnection();
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, dto.getName());
+	        pstmt.setString(2, dto.getPhone());
+	        pstmt.setString(3, dto.getAddress());
+	        pstmt.setString(4, dto.getGender());
+	        pstmt.setDate(5, dto.getBirthdate());
+	        pstmt.setString(6, dto.getUserId());
+
+	        pstmt.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
 }

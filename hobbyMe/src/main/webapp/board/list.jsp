@@ -1,0 +1,110 @@
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.*"%>
+<%@ page import="mvc.model.BoardDTO"%>
+
+<%
+// 세션에서 로그인한 사용자 ID를 가져옴 (로그인 여부 확인용)
+String sessionId = (String) session.getAttribute("sessionId");
+List<BoardDTO> boardList = (List<BoardDTO>) request.getAttribute("boardlist");
+int total_record = (int) request.getAttribute("total_record");
+int pageNum = (int) request.getAttribute("pageNum");
+int total_page = (int) request.getAttribute("total_page");
+%>
+
+<html>
+<head>
+<link rel="stylesheet" href="./resources/css/bootstrap.min.css" />
+<title>Board</title>
+<script type="text/javascript">
+        function checkForm() {   
+            // EL 사용하여 로그인 여부 확인
+            if ("${sessionId}" == "") {
+                alert("로그인 해주세요.");
+                return false;
+            }
+            location.href = "./BoardWriteForm.do?id=<%=sessionId%>
+	"
+	}
+</script>
+</head>
+<body>
+	<div class="container py-4">
+		<jsp:include page="../main.jsp" />
+
+		<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+			<div class="container-fluid py-5">
+				<h1 class="display-5 fw-bold">게시판</h1>
+				<p class="col-md-8 fs-4">Board</p>
+			</div>
+		</div>
+
+		<div class="row align-items-md-stretch text-center">
+			<form action="<c:url value="./BoardListAction.do"/>" method="post">
+
+				<div class="text-end">
+					<span class="badge text-bg-success">전체 <%=total_record%>건
+					</span>
+				</div>
+
+				<div style="padding-top: 20px">
+					<table class="table table-hover text-center">
+						<tr>
+							<th>번호</th>
+							<th>제목</th>
+							<th>작성일</th>
+							<th>태그</th>
+							<th>글쓴이</th>
+						</tr>
+						<%
+						for (BoardDTO notice : boardList) {
+						%>
+						<tr>
+							<td><%=notice.getPost_num()%></td>
+							<td><a
+								href="./BoardViewAction.do?post_num=<%=notice.getPost_num()%>&pageNum=<%=pageNum%>"><%=notice.getTitle()%></a></td>
+							<td><%=notice.getCreated_date()%></td>
+							<td><%=notice.getTag()%></td>
+							<td><%=notice.getUser_id()%></td>
+						</tr>
+						<%
+						}
+						%>
+					</table>
+				</div>
+
+				<div align="center">
+					<c:set var="pageNum" value="<%=pageNum%>" />
+					<c:forEach var="i" begin="1" end="<%=total_page%>">
+						<a href="<c:url value="./BoardListAction.do?pageNum=${i}" /> ">
+							<c:choose>
+								<c:when test="${pageNum == i}">
+									<font color='4C5317'><b> [${i}]</b></font>
+								</c:when>
+								<c:otherwise>
+									<font color='4C5317'> [${i}]</font>
+								</c:otherwise>
+							</c:choose>
+						</a>
+					</c:forEach>
+				</div>
+
+				<div class="py-3" align="right">
+					<a href="BoardWriteForm.do" class="btn btn-primary">글쓰기</a>
+				</div>
+
+				<div align="left">
+					<select name="items" class="txt">
+						<option value="subject">제목에서</option>
+						<option value="content">본문에서</option>
+						<option value="name">글쓴이에서</option>
+					</select> <input name="text" type="text" /> <input type="submit"
+						id="btnAdd" class="btn btn-primary" value="검색" />
+				</div>
+			</form>
+		</div>
+
+		<jsp:include page="../footer.jsp" />
+	</div>
+</body>
+</html>

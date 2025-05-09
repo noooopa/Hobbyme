@@ -12,6 +12,11 @@
   } else if ("2".equals(msg)) {
 %>
     <h3>로그인에 성공했습니다.</h3>
+    <a href="./updateMember.do">수정하러 가기</a>
+<%
+  } else if ("3".equals(msg)){
+%>
+	<h3>정보 수정 하였습니다.</h3>
 <%
   }
 %>

@@ -75,6 +75,32 @@ public class HobbyController extends HttpServlet {
 
 		    RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/login/resultMember.jsp?msg=1");
 	        rd.forward(request, response);
+		} else if (command.equals("/updateMember.do")) {
+		    String sessionId = (String) request.getSession().getAttribute("sessionId");
+		    HobbyDTO user = HobbyDAO.getInstance().getUserById(sessionId);
+		    request.setAttribute("user", user);
+		    RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/login/updateMember.jsp");
+		    rd.forward(request, response);
+		} else if (command.equals("/updateProcess.do")) {
+		    request.setCharacterEncoding("UTF-8");
+		    String str1 = request.getParameter("postcode");
+		    String str2 = request.getParameter("address");
+		    String str3 = request.getParameter("detailAddress");
+		    String fullAddress = String.join("/", str1, str2, str3);
+		    String birthdateStr = request.getParameter("birthdate");
+
+		    HobbyDTO dto = new HobbyDTO();
+		    dto.setUserId(request.getParameter("user_id"));
+		    dto.setName(request.getParameter("name"));
+		    dto.setPhone(request.getParameter("phone"));
+		    dto.setAddress(fullAddress);
+		    dto.setGender(request.getParameter("gender"));
+		    dto.setBirthdate(Date.valueOf(birthdateStr));
+
+		    HobbyDAO.getInstance().updateUser(dto);
+
+		    RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/login/resultMember.jsp?msg=3");
+	        rd.forward(request, response);
 		}
 
 	}
